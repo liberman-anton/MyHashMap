@@ -51,16 +51,33 @@ public class MyHashMap implements Map {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        return getPair(key)!=null;
     }
 
     @Override
     public boolean containsValue(Object value) {
+        for(int i=0;i<blocks.length;i++){
+            int hc = value.hashCode();
+            for(Pair p:blocks[i]){
+                if (p.value.hashCode()==hc){
+                    if (value.equals(p.value)){
+                        return true;
+                    }
+                }
+
+            }
+        }
         return false;
     }
 
     @Override
     public Object get(Object key) {
+        Pair pair = getPair(key);
+        if (pair==null) return null;
+        return pair.value;
+    }
+
+    private Pair getPair(Object key) {
         int hash = key.hashCode();
         int idx = hash%blocks.length;
 
@@ -69,7 +86,7 @@ public class MyHashMap implements Map {
         for(Pair p:curBlock){
             if(p.key.hashCode() == hash){
                 if (p.key.equals(key)){
-                    return p.value;
+                    return p;
                 }
             }
         }
@@ -82,11 +99,6 @@ public class MyHashMap implements Map {
         }
 
         MyHashMap myHashMap = new MyHashMap(blocks.length * 2);
-
-        ArrayList[] newBlocks = new ArrayList[blocks.length*2];
-        for(int i=0;i<newBlocks.length;i++){
-            newBlocks[i] = new ArrayList<>();
-        }
 
         for(int i=0;i<blocks.length;i++){
             for(Pair p:blocks[i]){
