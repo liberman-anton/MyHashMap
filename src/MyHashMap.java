@@ -10,10 +10,12 @@ public class MyHashMap implements Map {
     public static void main(String[] args) {
         Map m = new MyHashMap();
 
-        m.put("test", "TEST");
-        m.put("test1", "TEST1");
+        for(int i=0;i<100;i++){
+            m.put(i, "the" + i);
+        }
 
-        System.out.println(m.get("test1"));
+        System.out.println();
+
     }
 
     static class Pair {
@@ -24,9 +26,16 @@ public class MyHashMap implements Map {
     ArrayList<Pair>[] blocks;
 
     MyHashMap() {
-        blocks = new ArrayList[16];
+        blocks = new ArrayList[2];
         for(int i=0;i<blocks.length;i++){
-            blocks[i] = new ArrayList<Pair>();
+            blocks[i] = new ArrayList<>();
+        }
+    }
+
+    MyHashMap(int sz) {
+        blocks = new ArrayList[sz];
+        for(int i=0;i<blocks.length;i++){
+            blocks[i] = new ArrayList<>();
         }
     }
 
@@ -67,8 +76,32 @@ public class MyHashMap implements Map {
         return null;
     }
 
+    public void ensureCapacity() {
+        if (size / blocks.length < 10) {
+            return;
+        }
+
+        MyHashMap myHashMap = new MyHashMap(blocks.length * 2);
+
+        ArrayList[] newBlocks = new ArrayList[blocks.length*2];
+        for(int i=0;i<newBlocks.length;i++){
+            newBlocks[i] = new ArrayList<>();
+        }
+
+        for(int i=0;i<blocks.length;i++){
+            for(Pair p:blocks[i]){
+                myHashMap.put(p.key, p.value);
+            }
+        }
+        this.blocks = myHashMap.blocks;
+
+    }
+
     @Override
     public Object put(Object key, Object value) {
+
+        ensureCapacity();
+
         int hash = key.hashCode();
         int idx = hash%blocks.length;
 
@@ -89,6 +122,7 @@ public class MyHashMap implements Map {
         p.value = value;
 
         curBlock.add(p);
+        size++;
         return null;
     }
 
