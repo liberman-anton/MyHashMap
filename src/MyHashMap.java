@@ -140,11 +140,28 @@ public class MyHashMap implements Map {
 
     @Override
     public Object remove(Object key) {
+        int hash = key.hashCode();
+        int idx = hash%blocks.length;
+
+        ArrayList<Pair> curBlock = blocks[idx];
+
+        for(int i=0;i<curBlock.size();i++){
+            Pair p=curBlock.get(i);
+            if(p.key.hashCode() == hash){
+                if (p.key.equals(key)){
+                    curBlock.remove(i);
+                    return p.value;
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public void putAll(Map m) {
+        for(Object key:m.keySet()){
+            this.put(key, m.get(key));
+        }
 
     }
 
