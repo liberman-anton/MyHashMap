@@ -14,7 +14,8 @@ public class MyHashMap implements Map {
             m.put(i, "the" + i);
         }
 
-        System.out.println();
+
+        System.out.println(m.containsKey(200));
 
     }
 
@@ -26,13 +27,14 @@ public class MyHashMap implements Map {
     ArrayList<Pair>[] blocks;
 
     MyHashMap() {
-        blocks = new ArrayList[2];
-        for(int i=0;i<blocks.length;i++){
-            blocks[i] = new ArrayList<>();
-        }
+        init(2);
     }
 
     MyHashMap(int sz) {
+        init(sz);
+    }
+
+    private void init(int sz) {
         blocks = new ArrayList[sz];
         for(int i=0;i<blocks.length;i++){
             blocks[i] = new ArrayList<>();
@@ -149,6 +151,7 @@ public class MyHashMap implements Map {
             Pair p=curBlock.get(i);
             if(p.key.hashCode() == hash){
                 if (p.key.equals(key)){
+                    size--;
                     curBlock.remove(i);
                     return p.value;
                 }
@@ -167,6 +170,8 @@ public class MyHashMap implements Map {
 
     @Override
     public void clear() {
+        size = 0;
+        init(16);
 
     }
 
